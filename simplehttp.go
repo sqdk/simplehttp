@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"fmt"
 )
 
 type SimpleHTTPRequest struct {
@@ -46,8 +45,6 @@ func (r *SimpleHTTPRequest) AddHeader(name, value string) {
 }
 
 func (r *SimpleHTTPRequest) SetBasicAuth(user, password string) {
-	fmt.Println(user)
-	fmt.Println(password)
 	r.BasicAuthUser = user
 	r.BasicAuthPassword = password
 }
@@ -81,9 +78,6 @@ func (r *SimpleHTTPRequest) MakeRequest() ([]byte, error) {
 
 	if r.BasicAuthUser != "" && r.BasicAuthPassword != "" {
 		req.SetBasicAuth(r.BasicAuthUser, r.BasicAuthPassword)
-	} else {
-		fmt.Println(r.BasicAuthUser)
-		fmt.Println(r.BasicAuthPassword)
 	}
 
 	for header, value := range r.Headers {
