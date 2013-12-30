@@ -13,7 +13,7 @@ type SimpleHTTPRequest struct {
 	Method            string
 	URL               string
 	Parameters        map[string][]string
-	FormValues        map[string]string
+	FormValues        map[string][]string
 	Headers           map[string]string
 	BasicAuthUser     string
 	BasicAuthPassword string
@@ -44,9 +44,9 @@ func (r *SimpleHTTPRequest) AddParameter(name, value string) {
 
 func (r *SimpleHTTPRequest) AddFormValue(name, value string) {
 	if r.FormValues == nil {
-		r.FormValues = make(map[string]string)
+		r.FormValues = make(map[string][]string)
 	}
-	r.FormValues[name] = value
+	r.FormValues[name] = append(r.FormValues[name], value)
 }
 
 func (r *SimpleHTTPRequest) AddHeader(name, value string) {
@@ -116,8 +116,10 @@ func (r *SimpleHTTPRequest) makeBodyData() (data url.Values, hasBody bool) {
 	if r.FormValues != nil && len(r.FormValues) > 0 {
 		hasBody = true
 		r.AddHeader("Content-Type", "application/x-www-form-urlencoded")
-		for name, value := range r.FormValues {
-			data.Add(name, value)
+		for name, values := range r.FormValues {
+			for _, value := range values {
+				data.Add(name, value)
+			}
 		}
 	} else {
 		hasBody = false
