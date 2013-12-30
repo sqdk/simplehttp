@@ -23,6 +23,18 @@ func NewSimpleHTTPRequest(method, url string) *SimpleHTTPRequest {
 	return &SimpleHTTPRequest{Method: method, URL: url}
 }
 
+func NewGetRequest(url string) *SimpleHTTPRequest {
+	return NewSimpleHTTPRequest("GET", url)
+}
+
+func NewPostRequest(url string) *SimpleHTTPRequest {
+	return NewSimpleHTTPRequest("POST", url)
+}
+
+func NewDeleteRequest(url string) *SimpleHTTPRequest {
+	return NewSimpleHTTPRequest("DELETE", url)
+}
+
 func (r *SimpleHTTPRequest) AddParameter(name, value string) {
 	if r.Parameters == nil {
 		r.Parameters = make(map[string]string)
