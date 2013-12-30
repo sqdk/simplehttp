@@ -12,7 +12,7 @@ import (
 type SimpleHTTPRequest struct {
 	Method            string
 	URL               string
-	Parameters        map[string]string
+	Parameters        map[string][]string
 	FormValues        map[string]string
 	Headers           map[string]string
 	BasicAuthUser     string
@@ -37,9 +37,9 @@ func NewDeleteRequest(url string) *SimpleHTTPRequest {
 
 func (r *SimpleHTTPRequest) AddParameter(name, value string) {
 	if r.Parameters == nil {
-		r.Parameters = make(map[string]string)
+		r.Parameters = make(map[string][]string)
 	}
-	r.Parameters[name] = value
+	r.Parameters[name] = append(r.Parameters[name], value)
 }
 
 func (r *SimpleHTTPRequest) AddFormValue(name, value string) {
@@ -133,8 +133,10 @@ func (r *SimpleHTTPRequest) generateUrlWithParameters() (string, error) {
 	}
 	q := url.Query()
 	if r.Parameters != nil && len(r.Parameters) > 0 {
-		for name, value := range r.Parameters {
-			q.Set(name, value)
+		for name, values := range r.Parameters {
+			for _, value := range values {
+				q.Add(name, value)
+			}
 		}
 	}
 	url.RawQuery = q.Encode()
