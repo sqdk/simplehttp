@@ -3,6 +3,7 @@ package simplehttp
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -67,6 +68,14 @@ func (r *SimpleHTTPRequest) MakeJSONRequest(v interface{}) error {
 		return err
 	}
 	return json.Unmarshal(responseBody, v)
+}
+
+func (r *SimpleHTTPRequest) MakeXMLRequest(v interface{}) error {
+	responseBody, err := r.MakeRequest()
+	if err != nil {
+		return err
+	}
+	return xml.Unmarshal(responseBody, v)
 }
 
 func (r *SimpleHTTPRequest) MakeRequest() ([]byte, error) {
