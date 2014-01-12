@@ -1,3 +1,8 @@
+// Package simplehttp provides some simple methods and types to do
+// HTTP queries with form values and parameters easily - especially
+// if the returned result is expected to be JSON or XML.
+//
+// Author: Michael Banzon
 package simplehttp
 
 import (
