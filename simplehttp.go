@@ -23,6 +23,9 @@ type SimpleHTTPRequest struct {
 	Headers           map[string]string
 	BasicAuthUser     string
 	BasicAuthPassword string
+
+	LastResponseCode int
+	LastRawResponse  []byte
 }
 
 func NewSimpleHTTPRequest(method, url string) *SimpleHTTPRequest {
@@ -112,6 +115,10 @@ func (r *SimpleHTTPRequest) MakeRequest() ([]byte, error) {
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	r.LastRawResponse = nil
+	if resp != nil {
+		r.LastResponseCode = resp.StatusCode
+	}
 	if err != nil {
 		return make([]byte, 0), err
 	}
@@ -122,6 +129,7 @@ func (r *SimpleHTTPRequest) MakeRequest() ([]byte, error) {
 		return make([]byte, 0), err
 	}
 
+	r.LastRawResponse = responseBody
 	return responseBody, nil
 }
 
