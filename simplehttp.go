@@ -70,6 +70,11 @@ func (r *SimpleHTTPRequest) SetBasicAuth(user, password string) {
 	r.BasicAuthPassword = password
 }
 
+func (r *SimpleHTTPRequest) ClearLastResponse() {
+	r.LastResponseCode = -1
+	r.LastRawResponse = nil
+}
+
 func (r *SimpleHTTPRequest) MakeJSONRequest(v interface{}) error {
 	responseBody, err := r.MakeRequest()
 	if err != nil {
