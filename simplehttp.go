@@ -15,6 +15,7 @@ import (
 	"net/url"
 )
 
+// Holds all information used to make a HTTP request.
 type SimpleHTTPRequest struct {
 	Method            string
 	URL               string
