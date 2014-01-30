@@ -29,6 +29,7 @@ type SimpleHTTPRequest struct {
 	LastRawResponse  []byte
 }
 
+// Creates a new SimpleHTTPRequest instance.
 func NewSimpleHTTPRequest(method, url string) *SimpleHTTPRequest {
 	return &SimpleHTTPRequest{Method: method, URL: url}
 }
