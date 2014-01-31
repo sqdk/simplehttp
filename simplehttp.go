@@ -34,6 +34,7 @@ func NewSimpleHTTPRequest(method, url string) *SimpleHTTPRequest {
 	return &SimpleHTTPRequest{Method: method, URL: url}
 }
 
+// Creates a new instance of SimpleHTTPRequest to make a GET request.
 func NewGetRequest(url string) *SimpleHTTPRequest {
 	return NewSimpleHTTPRequest("GET", url)
 }
