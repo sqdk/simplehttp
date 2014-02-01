@@ -39,6 +39,7 @@ func NewGetRequest(url string) *SimpleHTTPRequest {
 	return NewSimpleHTTPRequest("GET", url)
 }
 
+// Creates a new instance of SimpleHTTPRequest to make a POST request.
 func NewPostRequest(url string) *SimpleHTTPRequest {
 	return NewSimpleHTTPRequest("POST", url)
 }
