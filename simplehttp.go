@@ -44,6 +44,7 @@ func NewPostRequest(url string) *SimpleHTTPRequest {
 	return NewSimpleHTTPRequest("POST", url)
 }
 
+// Creates a new instance of SimpleHTTPRequest to make a DELETE request.
 func NewDeleteRequest(url string) *SimpleHTTPRequest {
 	return NewSimpleHTTPRequest("DELETE", url)
 }
