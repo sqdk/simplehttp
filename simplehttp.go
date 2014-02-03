@@ -49,6 +49,7 @@ func NewDeleteRequest(url string) *SimpleHTTPRequest {
 	return NewSimpleHTTPRequest("DELETE", url)
 }
 
+// Adds a parameter to the generated query string.
 func (r *SimpleHTTPRequest) AddParameter(name, value string) {
 	if r.Parameters == nil {
 		r.Parameters = make(map[string][]string)
