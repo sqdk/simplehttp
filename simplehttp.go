@@ -57,6 +57,7 @@ func (r *SimpleHTTPRequest) AddParameter(name, value string) {
 	r.Parameters[name] = append(r.Parameters[name], value)
 }
 
+// Adds a form value to the request.
 func (r *SimpleHTTPRequest) AddFormValue(name, value string) {
 	if r.FormValues == nil {
 		r.FormValues = make(map[string][]string)
