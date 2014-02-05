@@ -65,6 +65,7 @@ func (r *SimpleHTTPRequest) AddFormValue(name, value string) {
 	r.FormValues[name] = append(r.FormValues[name], value)
 }
 
+// Adds a header that will be sent with the HTTP request.
 func (r *SimpleHTTPRequest) AddHeader(name, value string) {
 	if r.Headers == nil {
 		r.Headers = make(map[string]string)
