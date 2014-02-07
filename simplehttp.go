@@ -73,6 +73,7 @@ func (r *SimpleHTTPRequest) AddHeader(name, value string) {
 	r.Headers[name] = value
 }
 
+// Sets username and password for basic authentication.
 func (r *SimpleHTTPRequest) SetBasicAuth(user, password string) {
 	r.BasicAuthUser = user
 	r.BasicAuthPassword = password
