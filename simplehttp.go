@@ -100,6 +100,7 @@ func (r *SimpleHTTPRequest) MakeXMLRequest(v interface{}) error {
 	return xml.Unmarshal(responseBody, v)
 }
 
+// Makes the prepared request and returns the result as a byte-slice.
 func (r *SimpleHTTPRequest) MakeRequest() ([]byte, error) {
 	url, err := r.generateUrlWithParameters()
 	if err != nil {
