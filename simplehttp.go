@@ -84,6 +84,7 @@ func (r *SimpleHTTPRequest) ClearLastResponse() {
 	r.LastRawResponse = nil
 }
 
+// Makes the prepared request and tries to unmarshal the result to the supplied interface.
 func (r *SimpleHTTPRequest) MakeJSONRequest(v interface{}) error {
 	responseBody, err := r.MakeRequest()
 	if err != nil {
