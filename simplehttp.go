@@ -84,7 +84,7 @@ func (r *SimpleHTTPRequest) ClearLastResponse() {
 	r.LastRawResponse = nil
 }
 
-// Makes the prepared request and tries to unmarshal the result to the supplied interface.
+// Makes the prepared request and tries to unmarshal the result as JSON to the supplied interface.
 func (r *SimpleHTTPRequest) MakeJSONRequest(v interface{}) error {
 	responseBody, err := r.MakeRequest()
 	if err != nil {
@@ -93,7 +93,7 @@ func (r *SimpleHTTPRequest) MakeJSONRequest(v interface{}) error {
 	return json.Unmarshal(responseBody, v)
 }
 
-// Makes the prepared request and tries to unmarshal the result to the supplied interface.
+// Makes the prepared request and tries to unmarshal the result as XML to the supplied interface.
 func (r *SimpleHTTPRequest) MakeXMLRequest(v interface{}) error {
 	responseBody, err := r.MakeRequest()
 	if err != nil {
