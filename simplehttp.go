@@ -79,6 +79,7 @@ func (r *SimpleHTTPRequest) SetBasicAuth(user, password string) {
 	r.BasicAuthPassword = password
 }
 
+// Clears the last received response.
 func (r *SimpleHTTPRequest) ClearLastResponse() {
 	r.LastResponseCode = -1
 	r.LastRawResponse = nil
