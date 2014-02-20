@@ -151,6 +151,7 @@ func (r *SimpleHTTPRequest) MakeRequest() ([]byte, error) {
 	return responseBody, nil
 }
 
+// Creates the body of the request if required.
 func (r *SimpleHTTPRequest) makeBodyData() (data url.Values, hasBody bool) {
 	data = url.Values{}
 	if r.FormValues != nil && len(r.FormValues) > 0 {
