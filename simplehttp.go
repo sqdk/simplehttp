@@ -156,6 +156,7 @@ func (r *SimpleHTTPRequest) makeBodyData() (data url.Values, hasBody bool) {
 	data = url.Values{}
 	if r.FormValues != nil && len(r.FormValues) > 0 {
 		hasBody = true
+		// Adds header for content type if form values for body are set.
 		r.AddHeader("Content-Type", "application/x-www-form-urlencoded")
 		for name, values := range r.FormValues {
 			for _, value := range values {
