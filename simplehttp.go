@@ -170,6 +170,7 @@ func (r *SimpleHTTPRequest) makeBodyData() (data url.Values, hasBody bool) {
 	return
 }
 
+// Generates the complete URL using GET parameters.
 func (r *SimpleHTTPRequest) generateUrlWithParameters() (string, error) {
 	url, err := url.Parse(r.URL)
 	if err != nil {
