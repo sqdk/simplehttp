@@ -1,11 +1,14 @@
 package simplehttp
 
 import (
+	"bytes"
 	"errors"
+	"net/url"
 )
 
 type Payload interface {
-	GetPayloadBytes() []byte
+	GetPayloadBytes() (*bytes.Buffer, error)
+	GetContentType() string
 }
 
 type FormDataPayload struct {
@@ -43,8 +46,10 @@ func (f *FormDataPayload) RemoveFile(key string) error {
 	}
 }
 
-func (f *FormDataPayload) GetPayloadBytes() []byte {
-	return nil
+func (f *FormDataPayload) GetPayloadBytes() (*bytes.Buffer, error) {
+	data := &bytes.Buffer{}
+
+	return nil, nil
 }
 
 func NewUrlEncodedPayload() *UrlEncodedPayload {
@@ -69,6 +74,10 @@ func (f *UrlEncodedPayload) RemoveValue(key string) error {
 	}
 }
 
-func (f *UrlEncodedPayload) GetPayloadBytes() []byte {
-	return nil
+func (f *UrlEncodedPayload) GetPayloadBytes() (*bytes.Buffer, error) {
+	data := url.Values{}
+	for key, value := range f.Values {
+		data.Add(key, value)
+	}
+	return bytes.NewBufferString(data.Encode()), nil
 }
