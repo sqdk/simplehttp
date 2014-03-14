@@ -3,7 +3,11 @@ package simplehttp
 import (
 	"bytes"
 	"errors"
+	"io"
+	"mime/multipart"
 	"net/url"
+	"os"
+	"path"
 )
 
 type Payload interface {
@@ -48,8 +52,31 @@ func (f *FormDataPayload) RemoveFile(key string) error {
 
 func (f *FormDataPayload) GetPayloadBytes() (*bytes.Buffer, error) {
 	data := &bytes.Buffer{}
+	writer := multipart.NewWriter(data)
+	defer writer.Close()
 
-	return nil, nil
+	for name, value := range f.Values {
+		if tmp, err := writer.CreateFormField(name); err == nil {
+			tmp.Write([]byte(value))
+		} else {
+			return nil, err
+		}
+	}
+
+	for name, file := range f.Files {
+		if tmp, err := writer.CreateFormFile(name, path.Base(file)); err == nil {
+			if fp, err := os.Open(file); err == nil {
+				defer fp.Close()
+				io.Copy(tmp, fp)
+			} else {
+				return nil, err
+			}
+		} else {
+			return nil, err
+		}
+	}
+
+	return data, nil
 }
 
 func NewUrlEncodedPayload() *UrlEncodedPayload {
