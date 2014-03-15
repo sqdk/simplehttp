@@ -11,13 +11,13 @@ import (
 )
 
 type Payload interface {
-	GetPayloadBytes() (*bytes.Buffer, error)
+	GetPayloadBuffer() (*bytes.Buffer, error)
 	GetContentType() string
 }
 
 type FormDataPayload struct {
-	UrlEncodedPayload
-	Files map[string]string
+	Values map[string]string
+	Files  map[string]string
 }
 
 type UrlEncodedPayload struct {
@@ -29,7 +29,18 @@ type RawPayload struct {
 }
 
 func NewFormDataPayload() *FormDataPayload {
-	return &FormDataPayload{}
+	values := make(map[string]string)
+	files := make(map[string]string)
+	return &FormDataPayload{Values: values, Files: files}
+}
+
+func (f *FormDataPayload) AddValue(key, value string) error {
+	if _, ok := f.Values[key]; !ok {
+		f.Values[key] = value
+		return nil
+	} else {
+		return errors.New("Value already exists.")
+	}
 }
 
 func (f *FormDataPayload) AddFile(key, file string) error {
@@ -50,7 +61,7 @@ func (f *FormDataPayload) RemoveFile(key string) error {
 	}
 }
 
-func (f *FormDataPayload) GetPayloadBytes() (*bytes.Buffer, error) {
+func (f *FormDataPayload) GetPayloadBuffer() (*bytes.Buffer, error) {
 	data := &bytes.Buffer{}
 	writer := multipart.NewWriter(data)
 	defer writer.Close()
@@ -79,8 +90,13 @@ func (f *FormDataPayload) GetPayloadBytes() (*bytes.Buffer, error) {
 	return data, nil
 }
 
+func (f *FormDataPayload) GetContentType() string {
+	return "multipart/form-data"
+}
+
 func NewUrlEncodedPayload() *UrlEncodedPayload {
-	return &UrlEncodedPayload{}
+	values := make(map[string]string)
+	return &UrlEncodedPayload{Values: values}
 }
 
 func (f *UrlEncodedPayload) AddValue(key, value string) error {
@@ -101,10 +117,14 @@ func (f *UrlEncodedPayload) RemoveValue(key string) error {
 	}
 }
 
-func (f *UrlEncodedPayload) GetPayloadBytes() (*bytes.Buffer, error) {
+func (f *UrlEncodedPayload) GetPayloadBuffer() (*bytes.Buffer, error) {
 	data := url.Values{}
 	for key, value := range f.Values {
 		data.Add(key, value)
 	}
 	return bytes.NewBufferString(data.Encode()), nil
+}
+
+func (f *UrlEncodedPayload) GetContentType() string {
+	return "application/x-www-form-urlencoded"
 }

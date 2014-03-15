@@ -6,9 +6,6 @@
 package simplehttp
 
 import (
-	"bytes"
-	"encoding/json"
-	"encoding/xml"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -17,36 +14,21 @@ import (
 
 // Holds all information used to make a HTTP request.
 type HTTPRequest struct {
-	Method            string
 	URL               string
 	Parameters        map[string][]string
-	FormValues        map[string][]string
 	Headers           map[string]string
 	BasicAuthUser     string
 	BasicAuthPassword string
+}
 
-	LastResponseCode int
-	LastRawResponse  []byte
+type HTTPResponse struct {
+	Code int
+	Data []byte
 }
 
 // Creates a new HTTPRequest instance.
-func NewHTTPRequest(method, url string) *HTTPRequest {
-	return &HTTPRequest{Method: method, URL: url}
-}
-
-// Creates a new instance of HTTPRequest to make a GET request.
-func NewGetRequest(url string) *HTTPRequest {
-	return NewHTTPRequest("GET", url)
-}
-
-// Creates a new instance of HTTPRequest to make a POST request.
-func NewPostRequest(url string) *HTTPRequest {
-	return NewHTTPRequest("POST", url)
-}
-
-// Creates a new instance of HTTPRequest to make a DELETE request.
-func NewDeleteRequest(url string) *HTTPRequest {
-	return NewHTTPRequest("DELETE", url)
+func NewHTTPRequest(url string) *HTTPRequest {
+	return &HTTPRequest{URL: url}
 }
 
 // Adds a parameter to the generated query string.
@@ -55,14 +37,6 @@ func (r *HTTPRequest) AddParameter(name, value string) {
 		r.Parameters = make(map[string][]string)
 	}
 	r.Parameters[name] = append(r.Parameters[name], value)
-}
-
-// Adds a form value to the request.
-func (r *HTTPRequest) AddFormValue(name, value string) {
-	if r.FormValues == nil {
-		r.FormValues = make(map[string][]string)
-	}
-	r.FormValues[name] = append(r.FormValues[name], value)
 }
 
 // Adds a header that will be sent with the HTTP request.
@@ -79,48 +53,44 @@ func (r *HTTPRequest) SetBasicAuth(user, password string) {
 	r.BasicAuthPassword = password
 }
 
-// Clears the last received response.
-func (r *HTTPRequest) ClearLastResponse() {
-	r.LastResponseCode = -1
-	r.LastRawResponse = nil
+func (r *HTTPRequest) MakeGetRequest() (*HTTPResponse, error) {
+	return r.MakeRequest("GET", nil)
 }
 
-// Makes the prepared request and tries to unmarshal the result as JSON to the supplied interface.
-func (r *HTTPRequest) MakeJSONRequest(v interface{}) error {
-	responseBody, err := r.MakeRequest()
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(responseBody, v)
+func (r *HTTPRequest) MakePostRequest(payload Payload) (*HTTPResponse, error) {
+	return r.MakeRequest("POST", payload)
 }
 
-// Makes the prepared request and tries to unmarshal the result as XML to the supplied interface.
-func (r *HTTPRequest) MakeXMLRequest(v interface{}) error {
-	responseBody, err := r.MakeRequest()
-	if err != nil {
-		return err
-	}
-	return xml.Unmarshal(responseBody, v)
+func (r *HTTPRequest) MakePutRequest(payload Payload) (*HTTPResponse, error) {
+	return r.MakeRequest("PUT", payload)
 }
 
-// Makes the prepared request and returns the result as a byte-slice.
-func (r *HTTPRequest) MakeRequest() ([]byte, error) {
+func (r *HTTPRequest) MakeDeleteRequest() (*HTTPResponse, error) {
+	return r.MakeRequest("DELETE", nil)
+}
+
+func (r *HTTPRequest) MakeRequest(method string, payload Payload) (*HTTPResponse, error) {
 	url, err := r.generateUrlWithParameters()
 	if err != nil {
-		return make([]byte, 0), err
+		return nil, err
 	}
-	bodyData, hasBody := r.makeBodyData()
 
 	var body io.Reader
-	if hasBody {
-		body = bytes.NewBufferString(bodyData.Encode())
+	if payload != nil {
+		if body, err = payload.GetPayloadBuffer(); err != nil {
+			return nil, err
+		}
 	} else {
 		body = nil
 	}
 
-	req, err := http.NewRequest(r.Method, url, body)
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return make([]byte, 0), err
+		return nil, err
+	}
+
+	if payload != nil {
+		req.Header.Add("Content-Type", payload.GetContentType())
 	}
 
 	if r.BasicAuthUser != "" && r.BasicAuthPassword != "" {
@@ -131,43 +101,25 @@ func (r *HTTPRequest) MakeRequest() ([]byte, error) {
 		req.Header.Add(header, value)
 	}
 
+	response := HTTPResponse{}
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	r.LastRawResponse = nil
 	if resp != nil {
-		r.LastResponseCode = resp.StatusCode
+		response.Code = resp.StatusCode
 	}
 	if err != nil {
-		return make([]byte, 0), err
+		return nil, err
 	}
 
 	defer resp.Body.Close()
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return make([]byte, 0), err
+		return nil, err
 	}
 
-	r.LastRawResponse = responseBody
-	return responseBody, nil
-}
-
-// Creates the body of the request if required.
-func (r *HTTPRequest) makeBodyData() (data url.Values, hasBody bool) {
-	data = url.Values{}
-	if r.FormValues != nil && len(r.FormValues) > 0 {
-		hasBody = true
-		// Adds header for content type if form values for body are set.
-		r.AddHeader("Content-Type", "application/x-www-form-urlencoded")
-		for name, values := range r.FormValues {
-			for _, value := range values {
-				data.Add(name, value)
-			}
-		}
-	} else {
-		hasBody = false
-	}
-
-	return
+	response.Data = responseBody
+	return &response, nil
 }
 
 // Generates the complete URL using GET parameters.
