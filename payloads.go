@@ -16,8 +16,9 @@ type Payload interface {
 }
 
 type FormDataPayload struct {
-	Values map[string]string
-	Files  map[string]string
+	contentType string
+	Values      map[string]string
+	Files       map[string]string
 }
 
 type UrlEncodedPayload struct {
@@ -87,11 +88,16 @@ func (f *FormDataPayload) GetPayloadBuffer() (*bytes.Buffer, error) {
 		}
 	}
 
+	f.contentType = writer.FormDataContentType()
+
 	return data, nil
 }
 
 func (f *FormDataPayload) GetContentType() string {
-	return "multipart/form-data"
+	if f.contentType == "" {
+		f.GetPayloadBuffer()
+	}
+	return f.contentType
 }
 
 func NewUrlEncodedPayload() *UrlEncodedPayload {
