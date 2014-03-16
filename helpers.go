@@ -1,7 +1,5 @@
 package simplehttp
 
-import "fmt"
-
 func (r *HTTPRequest) GetResponseFromJSON(v interface{}) error {
 	response, err := r.MakeGetRequest()
 	if err != nil {
@@ -15,6 +13,5 @@ func (r *HTTPRequest) PostResponseFromJSON(payload Payload, v interface{}) error
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(response.Data))
 	return response.ParseFromJSON(v)
 }
