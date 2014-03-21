@@ -14,6 +14,12 @@ type keyValuePair struct {
 	value string
 }
 
+type keyNameRC struct {
+	key   string
+	name  string
+	value io.ReadCloser
+}
+
 type Payload interface {
 	GetPayloadBuffer() (*bytes.Buffer, error)
 	GetContentType() string
@@ -23,6 +29,7 @@ type FormDataPayload struct {
 	contentType string
 	Values      []keyValuePair
 	Files       []keyValuePair
+	ReadClosers []keyNameRC
 }
 
 type UrlEncodedPayload struct {
@@ -39,6 +46,10 @@ func (f *FormDataPayload) AddValue(key, value string) {
 
 func (f *FormDataPayload) AddFile(key, file string) {
 	f.Files = append(f.Files, keyValuePair{key: key, value: file})
+}
+
+func (f *FormDataPayload) AddReadCloser(key, name string, rc io.ReadCloser) {
+	f.ReadClosers = append(f.ReadClosers, keyNameRC{key: key, name: name, value: rc})
 }
 
 func (f *FormDataPayload) GetPayloadBuffer() (*bytes.Buffer, error) {
@@ -62,6 +73,15 @@ func (f *FormDataPayload) GetPayloadBuffer() (*bytes.Buffer, error) {
 			} else {
 				return nil, err
 			}
+		} else {
+			return nil, err
+		}
+	}
+
+	for _, file := range f.ReadClosers {
+		if tmp, err := writer.CreateFormFile(file.key, file.name); err == nil {
+			defer file.value.Close()
+			io.Copy(tmp, file.value)
 		} else {
 			return nil, err
 		}
