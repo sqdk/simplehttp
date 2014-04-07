@@ -38,3 +38,18 @@ func (r Request) Get(success, failure shorthandResponseHandler) {
 		}
 	}
 }
+
+func (r Request) Post(success, failure shorthandResponseHandler) {
+	req := createHttpRequest(r)
+	res, err := req.MakePostRequest(nil)
+
+	if err != nil || res.Code >= 400 {
+		if failure != nil {
+			failure(res.Data)
+		}
+	} else {
+		if success != nil {
+			success(res.Data)
+		}
+	}
+}
