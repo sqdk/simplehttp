@@ -5,6 +5,8 @@ type BasicAuthentication struct {
 	Password string
 }
 
+// The function prototype that handles responses using the
+// shorthand notation.
 type shorthandResponseHandler func([]byte)
 
 type Request struct {
