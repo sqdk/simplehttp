@@ -9,6 +9,7 @@ type BasicAuthentication struct {
 // shorthand notation.
 type shorthandResponseHandler func([]byte)
 
+// Type to wrap requests.
 type Request struct {
 	Url            string
 	Authentication BasicAuthentication
