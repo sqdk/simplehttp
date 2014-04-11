@@ -1,5 +1,6 @@
 package simplehttp
 
+// Type to encapsulate basic authentication for requests.
 type BasicAuthentication struct {
 	User     string
 	Password string
