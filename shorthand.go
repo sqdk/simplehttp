@@ -45,6 +45,8 @@ func (r Request) Get(success, failure shorthandResponseHandler) {
 	}
 }
 
+// Function that performs a POST request and calls the proper
+// callback functions.
 func (r Request) Post(success, failure shorthandResponseHandler) {
 	req := createHttpRequest(r)
 	res, err := req.MakePostRequest(nil)
