@@ -1,3 +1,4 @@
+// +build dummy-test
 package simplehttp
 
 import (
