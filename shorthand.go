@@ -28,7 +28,7 @@ func createHttpRequest(req Request) *HTTPRequest {
 	return r
 }
 
-// Functions that performs a basic GET request and calls the proper
+// Function that performs a basic GET request and calls the proper
 // callback functions.
 func (r Request) Get(success, failure shorthandResponseHandler) {
 	req := createHttpRequest(r)
