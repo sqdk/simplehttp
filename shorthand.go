@@ -108,3 +108,7 @@ func (r Request) AsyncGet(success, failure shorthandResponseHandler) {
 func (r Request) AsyncPost(success, failure shorthandResponseHandler) {
 	go r.Post(success, failure)
 }
+
+func (r Request) AsyncPut(success, failure shorthandResponseHandler) {
+	go r.Put(success, failure)
+}
