@@ -85,3 +85,18 @@ func (r Request) Put(success, failure shorthandResponseHandler) {
 		}
 	}
 }
+
+func (r Request) Delete(success, failure shorthandResponseHandler) {
+	req := createHttpRequest(r)
+	res, err := req.MakeDeleteRequest()
+
+	if err != nil || res.Code >= 400 {
+		if failure != nil {
+			failure(res.Data)
+		}
+	} else {
+		if success != nil {
+			success(res.Data)
+		}
+	}
+}
