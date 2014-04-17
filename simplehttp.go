@@ -89,7 +89,7 @@ func (r *HTTPRequest) MakeRequest(method string, payload Payload) (*HTTPResponse
 		return nil, err
 	}
 
-	if payload != nil {
+	if payload != nil && payload.GetContentType() != "" {
 		req.Header.Add("Content-Type", payload.GetContentType())
 	}
 
