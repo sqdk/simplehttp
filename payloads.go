@@ -25,6 +25,10 @@ type Payload interface {
 	GetContentType() string
 }
 
+type RawPayload struct {
+	Data []byte
+}
+
 type FormDataPayload struct {
 	contentType string
 	Values      []keyValuePair
@@ -34,6 +38,23 @@ type FormDataPayload struct {
 
 type UrlEncodedPayload struct {
 	Values []keyValuePair
+}
+
+func NewRawPayload(data []byte) *RawPayload {
+	return &RawPayload{Data: data}
+}
+
+func (r *RawPayload) GetPayloadBuffer() (*bytes.Buffer, error) {
+	data := &bytes.Buffer{}
+	c, err := data.Write(r.Data)
+	if c != len(r.Data) || err != nil {
+		return data, err
+	}
+	return data, nil
+}
+
+func (r *RawPayload) GetContentType() string {
+	return ""
 }
 
 func NewFormDataPayload() *FormDataPayload {
