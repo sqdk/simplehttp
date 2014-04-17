@@ -66,3 +66,22 @@ func (r Request) Post(success, failure shorthandResponseHandler) {
 		}
 	}
 }
+
+func (r Request) Put(success, failure shorthandResponseHandler) {
+	req := createHttpRequest(r)
+	var payload Payload = nil
+	if r.Data != nil {
+		payload = NewRawPayload(r.Data)
+	}
+	res, err := req.MakePutRequest(payload)
+
+	if err != nil || res.Code >= 400 {
+		if failure != nil {
+			failure(res.Data)
+		}
+	} else {
+		if success != nil {
+			success(res.Data)
+		}
+	}
+}
