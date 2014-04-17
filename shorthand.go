@@ -104,3 +104,7 @@ func (r Request) Delete(success, failure shorthandResponseHandler) {
 func (r Request) AsyncGet(success, failure shorthandResponseHandler) {
 	go r.Get(success, failure)
 }
+
+func (r Request) AsyncPost(success, failure shorthandResponseHandler) {
+	go r.Post(success, failure)
+}
