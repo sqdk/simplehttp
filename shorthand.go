@@ -15,6 +15,7 @@ type Request struct {
 	Url            string
 	Authentication BasicAuthentication
 	UserAgent      string
+	Data           []byte
 }
 
 func createHttpRequest(req Request) *HTTPRequest {
@@ -49,7 +50,11 @@ func (r Request) Get(success, failure shorthandResponseHandler) {
 // callback functions.
 func (r Request) Post(success, failure shorthandResponseHandler) {
 	req := createHttpRequest(r)
-	res, err := req.MakePostRequest(nil)
+	var payload Payload = nil
+	if r.Data != nil {
+		payload = NewRawPayload(r.Data)
+	}
+	res, err := req.MakePostRequest(payload)
 
 	if err != nil || res.Code >= 400 {
 		if failure != nil {
