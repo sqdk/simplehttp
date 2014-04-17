@@ -112,3 +112,7 @@ func (r Request) AsyncPost(success, failure shorthandResponseHandler) {
 func (r Request) AsyncPut(success, failure shorthandResponseHandler) {
 	go r.Put(success, failure)
 }
+
+func (r Request) AsyncDelete(success, failure shorthandResponseHandler) {
+	go r.Delete(success, failure)
+}
