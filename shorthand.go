@@ -100,3 +100,7 @@ func (r Request) Delete(success, failure shorthandResponseHandler) {
 		}
 	}
 }
+
+func (r Request) AsyncGet(success, failure shorthandResponseHandler) {
+	go r.Get(success, failure)
+}
