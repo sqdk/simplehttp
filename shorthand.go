@@ -6,10 +6,6 @@ type BasicAuthentication struct {
 	Password string
 }
 
-// The function prototype that handles responses using the
-// shorthand notation.
-type shorthandResponseHandler func([]byte)
-
 // Type to wrap requests.
 type Request struct {
 	Url            string
