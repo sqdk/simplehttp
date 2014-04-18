@@ -29,74 +29,34 @@ func createHttpRequest(req Request) *HTTPRequest {
 	return r
 }
 
-// Function that performs a basic GET request and calls the proper
-// callback functions.
-func (r Request) Get(success, failure shorthandResponseHandler) {
+func (r Request) Get() (int, []byte, error) {
 	req := createHttpRequest(r)
 	res, err := req.MakeGetRequest()
-
-	if err != nil || res.Code >= 400 {
-		if failure != nil {
-			failure(res.Data)
-		}
-	} else {
-		if success != nil {
-			success(res.Data)
-		}
-	}
+	return res.Code, res.Data, err
 }
 
-// Function that performs a POST request and calls the proper
-// callback functions.
-func (r Request) Post(success, failure shorthandResponseHandler) {
+func (r Request) Post() (int, []byte, error) {
 	req := createHttpRequest(r)
 	var payload Payload = nil
 	if r.Data != nil {
 		payload = NewRawPayload(r.Data)
 	}
 	res, err := req.MakePostRequest(payload)
-
-	if err != nil || res.Code >= 400 {
-		if failure != nil {
-			failure(res.Data)
-		}
-	} else {
-		if success != nil {
-			success(res.Data)
-		}
-	}
+	return res.Code, res.Data, err
 }
 
-func (r Request) Put(success, failure shorthandResponseHandler) {
+func (r Request) Put() (int, []byte, error) {
 	req := createHttpRequest(r)
 	var payload Payload = nil
 	if r.Data != nil {
 		payload = NewRawPayload(r.Data)
 	}
 	res, err := req.MakePutRequest(payload)
-
-	if err != nil || res.Code >= 400 {
-		if failure != nil {
-			failure(res.Data)
-		}
-	} else {
-		if success != nil {
-			success(res.Data)
-		}
-	}
+	return res.Code, res.Data, err
 }
 
-func (r Request) Delete(success, failure shorthandResponseHandler) {
+func (r Request) Delete(success, failure shorthandResponseHandler) (int, []byte, error) {
 	req := createHttpRequest(r)
 	res, err := req.MakeDeleteRequest()
-
-	if err != nil || res.Code >= 400 {
-		if failure != nil {
-			failure(res.Data)
-		}
-	} else {
-		if success != nil {
-			success(res.Data)
-		}
-	}
+	return res.Code, res.Data, err
 }
