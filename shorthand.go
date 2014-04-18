@@ -51,7 +51,7 @@ func (r Request) Put() (int, []byte, error) {
 	return res.Code, res.Data, err
 }
 
-func (r Request) Delete(success, failure shorthandResponseHandler) (int, []byte, error) {
+func (r Request) Delete() (int, []byte, error) {
 	req := createHttpRequest(r)
 	res, err := req.MakeDeleteRequest()
 	return res.Code, res.Data, err
